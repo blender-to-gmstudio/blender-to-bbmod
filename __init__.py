@@ -41,8 +41,8 @@ def write_bbmod(context, filepath, use_some_setting, vertex_format):
     header_bytes.extend(pack('B', BBMOD_version))   # BBMOD version
 
     # Write vertex format
-    format_bools = [attrib in vertex_format for attrib in vertex_attributes]
     vertex_format_bytes = bytearray()
+    format_bools = [attrib in vertex_format for attrib in vertex_attributes]
     vertex_format_bytes.extend(pack('?' * len(format_bools), *format_bools))
 
     # Write meshes
@@ -50,11 +50,28 @@ def write_bbmod(context, filepath, use_some_setting, vertex_format):
     meshes_bytes.extend(pack('I', len(model_list)))
     for mesh_object in model_list:
         mesh = mesh_object.data
+
+        # Per-mesh data (see BBMOD_Mesh.from_buffer)
+        meshes_bytes.extend(pack('I', 0))       # Material index
         meshes_bytes.extend(pack('I', len(mesh.polygons) * 3))
 
         # TODO Write vertex buffer data using the format provided
-
-        meshes_bytes.extend(pack('I', 0))       # Material index
+        for poly in mesh.polygons:
+            for loop in poly.loop_indices:
+                if 'vertices' in vertex_format:
+                    pass
+                if 'normals' in vertex_format:
+                    pass
+                if 'texcoords' in vertex_format:
+                    pass
+                if 'colors' in vertex_format:
+                    pass
+                if 'tangentw' in vertex_format:
+                    pass
+                if 'bones' in vertex_format:
+                    pass
+                if 'ids' in vertex_format:
+                    pass
 
     # Node count and root node
     node_name = bytearray("RootNode" + "\0", 'utf-8')
