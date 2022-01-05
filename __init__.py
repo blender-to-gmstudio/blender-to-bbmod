@@ -135,7 +135,7 @@ class ExportBBMOD(Operator, ExportHelper):
             ('bones', "Bones", "Whether the vertex format has vertex weights and bone indices"),
             ('ids', "Ids", "Whether the vertex format has ids for dynamic batching"),
         ),
-        default={'vertices'},
+        default={'vertices', 'normals', 'texcoords', 'colors', 'tangentw'},
         options={'ENUM_FLAG'},
     )
 
