@@ -50,28 +50,35 @@ def write_bbmod(context, filepath, use_some_setting, vertex_format):
     meshes_bytes.extend(pack('I', len(model_list)))
     for mesh_object in model_list:
         mesh = mesh_object.data
+        mesh_bytes = bytearray()
 
         # Per-mesh data (see BBMOD_Mesh.from_buffer)
-        meshes_bytes.extend(pack('I', 0))       # Material index
-        meshes_bytes.extend(pack('I', len(mesh.polygons) * 3))
+        mesh_bytes.extend(pack('I', 0))       # Material index
+        mesh_bytes.extend(pack('I', len(mesh.polygons) * 3))
 
-        # TODO Write vertex buffer data using the format provided
         for poly in mesh.polygons:
-            for loop in poly.loop_indices:
+            for li in poly.loop_indices:
+                loop = mesh.loops[li]
+                vi = loop.vertex_index
+                vertex = mesh.vertices[vi]
+
                 if 'vertices' in vertex_format:
-                    pass
+                    mesh_bytes.extend(pack('fff', *vertex.co[:]))
                 if 'normals' in vertex_format:
-                    pass
+                    mesh_bytes.extend(pack('fff', *vertex.normal[:]))
                 if 'texcoords' in vertex_format:
                     pass
                 if 'colors' in vertex_format:
-                    pass
+                    mesh_bytes.extend(pack('BBBB', *[255, 255, 255, 255]))  # white
                 if 'tangentw' in vertex_format:
-                    pass
+                    mesh_bytes.extend(pack('fff', *loop.tangent[:]))
+                    # TODO: bitangent sign
                 if 'bones' in vertex_format:
                     pass
                 if 'ids' in vertex_format:
                     pass
+
+        meshes_bytes.extend(mesh_bytes)
 
     # Node count and root node
     node_name = bytearray("RootNode" + "\0", 'utf-8')
