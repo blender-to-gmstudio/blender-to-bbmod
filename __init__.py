@@ -43,7 +43,8 @@ def write_bbmod(context, filepath, use_some_setting, vertex_format):
     # Write vertex format
     vertex_format_bytes = bytearray()
     format_bools = [attrib in vertex_format for attrib in vertex_attributes]
-    vertex_format_bytes.extend(pack('?' * len(format_bools), *format_bools))
+    # print([(attrib, attrib in vertex_format) for attrib in vertex_attributes])
+    vertex_format_bytes.extend(pack('B' * len(format_bools), *format_bools))
 
     # Write meshes
     meshes_bytes = bytearray()
@@ -67,12 +68,12 @@ def write_bbmod(context, filepath, use_some_setting, vertex_format):
                 if 'normals' in vertex_format:
                     mesh_bytes.extend(pack('fff', *vertex.normal[:]))
                 if 'texcoords' in vertex_format:
-                    pass
+                    mesh_bytes.extend(pack('ff', *[0, 0]))
                 if 'colors' in vertex_format:
-                    mesh_bytes.extend(pack('BBBB', *[255, 255, 255, 255]))  # white
+                    mesh_bytes.extend(pack('BBBB', *([255, 255, 255, 255])))  # white
                 if 'tangentw' in vertex_format:
                     mesh_bytes.extend(pack('fff', *loop.tangent[:]))
-                    # TODO: bitangent sign
+                    mesh_bytes.extend(pack('f', loop.bitangent_sign))
                 if 'bones' in vertex_format:
                     pass
                 if 'ids' in vertex_format:
