@@ -21,8 +21,8 @@ vertex_attributes = [
     'texcoords',
     'colors',
     'tangentw',
-    'bones',
-    'ids',
+    #'bones',
+    #'ids',
 ]
 
 def matrix_flatten(matrix):
