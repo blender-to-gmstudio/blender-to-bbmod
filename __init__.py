@@ -25,6 +25,9 @@ vertex_attributes = [
     'ids',
 ]
 
+# Mesh-like object types (the ones that can be converted to mesh)
+meshlike_types = {'MESH', 'CURVE', 'SURFACE', 'FONT', 'META'}
+
 def matrix_flatten(matrix):
     val = []
     for row in matrix:
@@ -33,8 +36,7 @@ def matrix_flatten(matrix):
 
 def write_bbmod(context, filepath, vertex_format):
     object_list = context.selected_objects
-    model_list = [object for object in object_list if object.type=='MESH']
-    # TODO "if object in 'meshlike' types"
+    model_list = [object for object in object_list if object.type in meshlike_types]
 
     # Type and version
     header_bytes = bytearray("bbmod\0", 'utf-8')    # BBMOD identifier
