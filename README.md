@@ -1,4 +1,4 @@
-# Blender TO BBMOD
+# Blender To BBMOD
 This Blender add-on allows a very basic export of a static Blender model
 to a BBMOD file. The generated .bbmod file can be loaded directly using [`BBMOD_Model.from_file`](https://github.com/blueburn-cz/BBMOD/blob/40a0fe0ad18752a672f8287b90fb89a42d6bc3d2/BBMOD_GML/scripts/BBMOD_Model/BBMOD_Model.gml#L159).
 
