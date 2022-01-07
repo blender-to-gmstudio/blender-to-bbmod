@@ -34,9 +34,14 @@ def matrix_flatten(matrix):
         val.extend(row[:])
     return val
 
-def write_bbmod(context, filepath, vertex_format):
+def write_bbmod(operator, context, filepath, vertex_format):
     object_list = context.selected_objects
     model_list = [object for object in object_list if object.type in meshlike_types]
+
+    if not model_list:
+        # Nothing to export!
+        operator.report({'ERROR_INVALID_INPUT'}, "Nothing selected or no valid object types in selection (Mesh, Curve, Surface, Text, Metaball)")
+        return {'FINISHED'}
 
     # Type and version
     header_bytes = bytearray("bbmod\0", 'utf-8')    # BBMOD identifier
@@ -54,7 +59,6 @@ def write_bbmod(context, filepath, vertex_format):
         # Create a triangulated copy of the mesh with modifiers applied
         mod_tri = mesh_object.modifiers.new('triangulate', 'TRIANGULATE')
         depsgraph = context.evaluated_depsgraph_get()
-        # TODO isn't this context just the context argument?
         obj_eval = mesh_object.evaluated_get(depsgraph)
         mesh_eval = bpy.data.meshes.new_from_object(obj_eval)
         del obj_eval
@@ -96,7 +100,7 @@ def write_bbmod(context, filepath, vertex_format):
     node_name = bytearray("RootNode" + "\0", 'utf-8')
     #node_matrix = Matrix()
     #values = matrix_flatten(node_matrix)
-    node_dq = [0, 0, 0, 1, 0, 0, 0, 0]
+    node_dq = [0, 0, 0, 1, 0, 0, 0, 0]          # Identity DQ for now
 
     node_bytes = bytearray()
     node_bytes.extend(pack('I', 1))             # NodeCount
@@ -172,7 +176,7 @@ class ExportBBMOD(Operator, ExportHelper):
     )
 
     def execute(self, context):
-        return write_bbmod(context, self.filepath, self.vertex_format)
+        return write_bbmod(self, context, self.filepath, self.vertex_format)
 
 
 # Only needed if you want to add into a dynamic menu
