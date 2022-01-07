@@ -143,12 +143,6 @@ class ExportBBMOD(Operator, ExportHelper):
         maxlen=255,  # Max internal buffer length, longer would be clamped.
     )
 
-    use_setting: BoolProperty(
-        name="Example Boolean",
-        description="Example Tooltip",
-        default=True,
-    )
-
     vertex_format: EnumProperty(
         name="Vertex Format",
         description="Choose between two items",
