@@ -10,3 +10,8 @@ of a [type](https://docs.blender.org/manual/en/latest/scene_layout/object/types.
 `Bones` and `Ids` are currently not supported.
 * Export the model using `Export BBMOD`
 * Load the model by calling `var mymodel = BBMOD_Model.from_file("mymodel.bbmod");`
+
+## Current limitations
+* Object transforms aren't applied yet
+* Only a single BBMOD_Node is exported and all objects are "attached" to that
+* No support for object hierarchies
