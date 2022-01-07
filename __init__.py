@@ -53,7 +53,7 @@ def write_bbmod(context, filepath, vertex_format):
     for mesh_object in model_list:
         # Create a triangulated copy of the mesh with modifiers applied
         mod_tri = mesh_object.modifiers.new('triangulate', 'TRIANGULATE')
-        depsgraph = bpy.context.evaluated_depsgraph_get()
+        depsgraph = context.evaluated_depsgraph_get()
         # TODO isn't this context just the context argument?
         obj_eval = mesh_object.evaluated_get(depsgraph)
         mesh_eval = bpy.data.meshes.new_from_object(obj_eval)
