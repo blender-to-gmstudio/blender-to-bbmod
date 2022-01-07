@@ -21,8 +21,8 @@ vertex_attributes = [
     'texcoords',
     'colors',
     'tangentw',
-    #'bones',
-    #'ids',
+    'bones',
+    'ids',
 ]
 
 def matrix_flatten(matrix):
@@ -43,25 +43,32 @@ def write_bbmod(context, filepath, vertex_format):
     # Write vertex format
     vertex_format_bytes = bytearray()
     format_bools = [attrib in vertex_format for attrib in vertex_attributes]
-    # print([(attrib, attrib in vertex_format) for attrib in vertex_attributes])
     vertex_format_bytes.extend(pack('B' * len(format_bools), *format_bools))
 
     # Write meshes
     meshes_bytes = bytearray()
     meshes_bytes.extend(pack('I', len(model_list)))
     for mesh_object in model_list:
-        mesh = mesh_object.data
+        # Create a triangulated copy of the mesh with modifiers applied
+        mod_tri = mesh_object.modifiers.new('triangulate', 'TRIANGULATE')
+        depsgraph = bpy.context.evaluated_depsgraph_get()
+        # TODO isn't this context just the context argument?
+        obj_eval = mesh_object.evaluated_get(depsgraph)
+        mesh_eval = bpy.data.meshes.new_from_object(obj_eval)
+        del obj_eval
+        mesh_object.modifiers.remove(mod_tri)
+
         mesh_bytes = bytearray()
 
         # Per-mesh data (see BBMOD_Mesh.from_buffer)
         mesh_bytes.extend(pack('I', 0))       # Material index
-        mesh_bytes.extend(pack('I', len(mesh.polygons) * 3))
+        mesh_bytes.extend(pack('I', len(mesh_eval.polygons) * 3))
 
-        for poly in mesh.polygons:
+        for poly in mesh_eval.polygons:
             for li in poly.loop_indices:
-                loop = mesh.loops[li]
+                loop = mesh_eval.loops[li]
                 vi = loop.vertex_index
-                vertex = mesh.vertices[vi]
+                vertex = mesh_eval.vertices[vi]
 
                 if 'vertices' in vertex_format:
                     mesh_bytes.extend(pack('fff', *vertex.co[:]))
@@ -81,6 +88,8 @@ def write_bbmod(context, filepath, vertex_format):
 
         meshes_bytes.extend(mesh_bytes)
 
+        bpy.data.meshes.remove(mesh_eval)
+
     # Node count and root node
     node_name = bytearray("RootNode" + "\0", 'utf-8')
     #node_matrix = Matrix()
@@ -97,13 +106,14 @@ def write_bbmod(context, filepath, vertex_format):
 
     node_bytes.extend(pack('I', len(model_list)))# Mesh count
 
-    node_bytes.extend(pack('I', 0))             # Mesh indices
+    for mesh_index in range(len(model_list)):
+        node_bytes.extend(pack('I', mesh_index))# Mesh indices
 
     node_bytes.extend(pack('I', 0))             # Child count
 
     # Skeleton
     skeleton_bytes = bytearray()
-    skeleton_bytes.extend(pack('I', 0))
+    skeleton_bytes.extend(pack('I', 0))         # Bone count
 
     # Materials
     material_bytes = bytearray()
