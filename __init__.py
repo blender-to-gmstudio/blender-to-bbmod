@@ -83,16 +83,17 @@ def write_bbmod(context, filepath, use_some_setting, vertex_format):
 
     # Node count and root node
     node_name = bytearray("RootNode" + "\0", 'utf-8')
-    node_matrix = Matrix()
-    values = matrix_flatten(node_matrix)
+    #node_matrix = Matrix()
+    #values = matrix_flatten(node_matrix)
+    node_dq = [0, 0, 0, 1, 0, 0, 0, 0]
 
     node_bytes = bytearray()
     node_bytes.extend(pack('I', 1))             # NodeCount
     node_bytes.extend(node_name)
     node_bytes.extend(pack('I', 0))             # Node Index
     node_bytes.extend(pack('?', True))          # IsBone
-    node_bytes.extend(pack('?', True))          # Visible
-    node_bytes.extend(pack('f' * 16, *values))  # Matrix
+    #node_bytes.extend(pack('?', True))          # Visible
+    node_bytes.extend(pack('f' * 8, *node_dq))  # Node DQ
 
     node_bytes.extend(pack('I', len(model_list)))# Mesh count
 
