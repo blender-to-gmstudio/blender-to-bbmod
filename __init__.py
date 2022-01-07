@@ -31,7 +31,7 @@ def matrix_flatten(matrix):
         val.extend(row[:])
     return val
 
-def write_bbmod(context, filepath, use_some_setting, vertex_format):
+def write_bbmod(context, filepath, vertex_format):
     object_list = context.selected_objects
     model_list = [object for object in object_list if object.type=='MESH']
     # TODO "if object in 'meshlike' types"
@@ -160,7 +160,7 @@ class ExportBBMOD(Operator, ExportHelper):
     )
 
     def execute(self, context):
-        return write_bbmod(context, self.filepath, self.use_setting, self.vertex_format)
+        return write_bbmod(context, self.filepath, self.vertex_format)
 
 
 # Only needed if you want to add into a dynamic menu
