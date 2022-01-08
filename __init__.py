@@ -175,6 +175,16 @@ class ExportBBMOD(Operator, ExportHelper):
         options={'ENUM_FLAG'},
     )
 
+    transforms: EnumProperty(
+        name="Transforms",
+        description="What to do with object transforms",
+        items=(
+            ('apply', "Apply", "Apply all transforms to the mesh data"),
+            ('nodesl', "Nodes Local", "Store the nodes and their hierarchy, use local transforms"),
+            ('nodesw', "Nodes World", ""),
+        )
+    )
+
     def execute(self, context):
         return write_bbmod(self, context, self.filepath, self.vertex_format)
 

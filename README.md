@@ -15,3 +15,4 @@ of a [type](https://docs.blender.org/manual/en/latest/scene_layout/object/types.
 * Object transforms aren't applied yet
 * Only a single BBMOD_Node is exported and all objects are "attached" to that
 * No support for object hierarchies
+* No skinning or animations
